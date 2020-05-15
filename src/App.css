@@ -1,0 +1,36 @@
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.mt-15 {
+  margin-top: 15px;
+}
+
+.mr-5 {
+  margin-right: 5px;
+}
+
+.ml-5 {
+  margin-left: 5px;
+}
+
+.panel-title span:nth-of-type(1) {
+  float: right;
+}
+
+a.sort_selected:after {
+  font-family: "Font Awesome";
+  font-weight: normal;
+  font-style: normal;
+  content: "\2713";
+  margin: 0px 0px 0px 10px;
+  display: inline-block;
+}
