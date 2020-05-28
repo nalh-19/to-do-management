@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import * as actions from "./../../../actions/index";
 
 class TaskItem extends Component {
   onUpdateStatus = () => {
@@ -6,11 +8,13 @@ class TaskItem extends Component {
   };
 
   onDelete = () => {
-    this.props.onDelete(this.props.task.id);
+    this.props.onDeleteTask(this.props.task.id);
+    this.props.onCloseForm(this.props.task.id);
   };
 
-  onUpdate = () => {
-    this.props.onUpdate(this.props.task.id);
+  onEditTask = () => {
+    this.props.onOpenForm();
+    this.props.onEditTask(this.props.task);
   };
 
   render() {
@@ -35,7 +39,7 @@ class TaskItem extends Component {
           <button
             type="button"
             className="btn btn-warning"
-            onClick={this.onUpdate}
+            onClick={this.onEditTask}
           >
             <span className="fas fa-pencil-alt mr-5"></span>
             Update
@@ -54,4 +58,28 @@ class TaskItem extends Component {
   }
 }
 
-export default TaskItem;
+const mapStateToProps = (state) => {
+  return {};
+};
+
+const mapDispatchToProps = (dispatch, props) => {
+  return {
+    onUpdateStatus: (id) => {
+      dispatch(actions.updateStatus(id));
+    },
+    onDeleteTask: (id) => {
+      dispatch(actions.deleteTask(id));
+    },
+    onCloseForm: () => {
+      dispatch(actions.closeForm());
+    },
+    onOpenForm: () => {
+      dispatch(actions.openForm());
+    },
+    onEditTask: (task) => {
+      dispatch(actions.editTask(task));
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(TaskItem);

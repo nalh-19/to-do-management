@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import * as actions from "./../../actions/index";
 
 class TaskForm extends Component {
   constructor(props) {
@@ -12,25 +14,27 @@ class TaskForm extends Component {
 
   // When click update
   componentWillMount() {
-    if (this.props.task) {
+    if (this.props.itemEditing && this.props.itemEditing.id !== null) {
       this.setState({
-        id: this.props.task.id,
-        name: this.props.task.name,
-        status: this.props.task.status,
+        id: this.props.itemEditing.id,
+        name: this.props.itemEditing.name,
+        status: this.props.itemEditing.status,
       });
+    } else {
+      this.onClear();
     }
   }
 
   // change between add & edit form
   componentWillReceiveProps(nextProps) {
-    if (nextProps && nextProps.task) {
+    if (nextProps && nextProps.itemEditing) {
       this.setState({
-        id: nextProps.task.id,
-        name: nextProps.task.name,
-        status: nextProps.task.status,
+        id: nextProps.itemEditing.id,
+        name: nextProps.itemEditing.name,
+        status: nextProps.itemEditing.status,
       });
-    } else if (!nextProps.task) {
-      this.setState({ id: "", name: "", status: false });
+    } else {
+      this.onClear();
     }
   }
 
@@ -45,20 +49,17 @@ class TaskForm extends Component {
   onChange = (event) => {
     var target = event.target;
     var name = target.name;
-    var value = target.value;
-    if (name === "status") {
-      value = target.value === "true" ? true : false;
-    }
+    var value = target.type === "checkbox" ? target.checked : target.value;
     this.setState({
       [name]: value,
     });
   };
 
-  onSubmit = (event) => {
+  onSave = (event) => {
     event.preventDefault();
-    this.props.onSubmit(this.state);
-    // Cancel & close form
+    this.props.onSaveTask(this.state);
     this.onClear();
+    this.onCloseForm();
   };
 
   onClear = () => {
@@ -70,11 +71,12 @@ class TaskForm extends Component {
 
   render() {
     var { id } = this.state;
+    if (!this.props.isDisplayForm) return null;
     return (
       <div className="panel panel-warning">
         <div className="panel-heading ">
           <h3 className="panel-title ">
-            {id !== "" ? "Edit Todo" : "Add Todo"}
+            {!id ? "Add task" : "Edit task"}
             <span
               className="fas fa-times-circle ml-5"
               onClick={this.onCloseForm}
@@ -82,7 +84,7 @@ class TaskForm extends Component {
           </h3>
         </div>
         <div className="panel-body">
-          <form onSubmit={this.onSubmit}>
+          <form onSubmit={this.onSave}>
             <div className="form-group">
               <label>Name: </label>
               <input
@@ -125,4 +127,22 @@ class TaskForm extends Component {
   }
 }
 
-export default TaskForm;
+const mapStateToProps = (state) => {
+  return {
+    isDisplayForm: state.formDisplayReducer,
+    itemEditing: state.itemEditingReducer,
+  };
+};
+
+const mapDispatchToProps = (dispatch, props) => {
+  return {
+    onSaveTask: (task) => {
+      dispatch(actions.saveTask(task));
+    },
+    onCloseForm: () => {
+      dispatch(actions.closeForm());
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(TaskForm);

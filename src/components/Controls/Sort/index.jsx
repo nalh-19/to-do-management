@@ -1,8 +1,10 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import * as actions from "./../../../actions/index";
 
 class Sort extends Component {
   onClick = (sortBy, sortValue) => {
-    this.props.onSort(sortBy, sortValue);
+    this.props.onSort({ by: sortBy, value: sortValue });
   };
 
   render() {
@@ -24,7 +26,7 @@ class Sort extends Component {
               <a
                 role="button"
                 className={
-                  this.props.sortBy === "name" && this.props.sortValue === 1
+                  this.props.sort.by === "name" && this.props.sort.value === 1
                     ? "sort_selected"
                     : ""
                 }
@@ -36,7 +38,7 @@ class Sort extends Component {
               <a
                 role="button"
                 className={
-                  this.props.sortBy === "name" && this.props.sortValue === -1
+                  this.props.sort.by === "name" && this.props.sort.value === -1
                     ? "sort_selected"
                     : ""
                 }
@@ -45,11 +47,12 @@ class Sort extends Component {
               </a>
             </li>
             <li role="separator" className="divider"></li>
-            <li onClick={() => this.onClick("status", 1)}>
+            <li onClick={() => this.onClick("status", -1)}>
               <a
                 role="button"
                 className={
-                  this.props.sortBy === "status" && this.props.sortValue === 1
+                  this.props.sort.by === "status" &&
+                  this.props.sort.value === -1
                     ? "sort_selected"
                     : ""
                 }
@@ -57,11 +60,11 @@ class Sort extends Component {
                 Status Active
               </a>
             </li>
-            <li onClick={() => this.onClick("status", -1)}>
+            <li onClick={() => this.onClick("status", 1)}>
               <a
                 role="button"
                 className={
-                  this.props.sortBy === "status" && this.props.sortValue === -1
+                  this.props.sort.by === "status" && this.props.sort.value === 1
                     ? "sort_selected"
                     : ""
                 }
@@ -76,4 +79,16 @@ class Sort extends Component {
   }
 }
 
-export default Sort;
+const mapStateToProps = (state) => {
+  return { sort: state.sortReducer };
+};
+
+const mapDispatchToProps = (dispatch, props) => {
+  return {
+    onSort: (sort) => {
+      dispatch(actions.sortTask(sort));
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Sort);
